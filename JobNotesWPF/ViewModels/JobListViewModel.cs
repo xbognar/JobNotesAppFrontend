@@ -1,9 +1,9 @@
 ﻿using JobNotesAppFrontend.Helpers;
 using JobNotesWPF.Models;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace JobNotesWPF.ViewModels
 {
@@ -16,18 +16,56 @@ namespace JobNotesWPF.ViewModels
 			set => SetProperty(ref _jobs, value);
 		}
 
-		public int TotalJobs { get; private set; }
-		public int BestYear { get; private set; }
-		public string BestMonth { get; private set; }
-		public string BestMonthYear { get; private set; }
-		public double AverageJobsPerYear { get; private set; }
+		private int _totalJobs;
+		public int TotalJobs
+		{
+			get => _totalJobs;
+			set => SetProperty(ref _totalJobs, value);
+		}
+
+		private int _bestYear;
+		public int BestYear
+		{
+			get => _bestYear;
+			set => SetProperty(ref _bestYear, value);
+		}
+
+		private string _bestMonth;
+		public string BestMonth
+		{
+			get => _bestMonth;
+			set => SetProperty(ref _bestMonth, value);
+		}
+
+		private string _bestMonthYear;
+		public string BestMonthYear
+		{
+			get => _bestMonthYear;
+			set => SetProperty(ref _bestMonthYear, value);
+		}
+
+		private double _averageJobsPerYear;
+		public double AverageJobsPerYear
+		{
+			get => _averageJobsPerYear;
+			set => SetProperty(ref _averageJobsPerYear, value);
+		}
+
+		private readonly IJobService _jobService;
 
 		public JobListViewModel(IJobService jobService)
 		{
-			var allJobs = jobService.GetJobsAsync().Result;
+			_jobService = jobService;
+			Jobs = new ObservableCollection<Job>();
 
+			// Initialize data asynchronously
+			LoadData();
+		}
+
+		private async void LoadData()
+		{
+			var allJobs = await _jobService.GetJobsAsync();
 			Jobs = new ObservableCollection<Job>(allJobs);
-
 			CalculateStatistics(allJobs);
 		}
 

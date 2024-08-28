@@ -1,10 +1,9 @@
 ﻿using JobNotesWPF.ViewModels;
-using JobNotesWPF;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http;
 using System.Windows;
-using System.Windows.Navigation;
+using dotenv.net;
 using JobNotesWPF.Views;
 
 public partial class App : Application
@@ -13,6 +12,8 @@ public partial class App : Application
 
 	public App()
 	{
+		DotEnv.Load();
+
 		var serviceCollection = new ServiceCollection();
 		ConfigureServices(serviceCollection);
 		ServiceProvider = serviceCollection.BuildServiceProvider();
@@ -20,22 +21,23 @@ public partial class App : Application
 
 	private void ConfigureServices(IServiceCollection services)
 	{
-		services.AddSingleton(new HttpClient { BaseAddress = new Uri("https://yourapiurl.com/") });
+		var apiBaseUrl = "http://localhost:5000/";
 
+		services.AddSingleton(new HttpClient { BaseAddress = new Uri(apiBaseUrl) });
 		services.AddTransient<IAuthenticationService, AuthenticationService>();
 		services.AddTransient<IJobService, JobService>();
 		services.AddTransient<INavigationService, NavigationService>();
-
 		services.AddSingleton<MainViewModel>();
 		services.AddSingleton<JobListViewModel>();
-
 		services.AddSingleton<MainWindow>();
 		services.AddSingleton<JobListWindow>();
-
 	}
 
-	protected override void OnStartup(StartupEventArgs e)
+	protected override async void OnStartup(StartupEventArgs e)
 	{
+		var mainViewModel = ServiceProvider.GetRequiredService<MainViewModel>();
+		await mainViewModel.Initialize();
+
 		var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
 		mainWindow.Show();
 

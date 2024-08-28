@@ -9,4 +9,8 @@ public interface IAuthenticationService
 	
 	string GetToken();
 
+	Task RefreshToken();
+
+	void StartTokenRefreshTimer();
+
 }
