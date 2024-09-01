@@ -24,7 +24,7 @@ public class AuthenticationService : BaseService, IAuthenticationService
 		response.EnsureSuccessStatusCode();
 
 		var content = await response.Content.ReadAsAsync<dynamic>();
-		_token = content.Token;
+		_token = content.token;
 		SetAuthorizationHeader(_token);
 
 		StartTokenRefreshTimer();

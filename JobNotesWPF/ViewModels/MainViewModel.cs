@@ -454,24 +454,24 @@ public class MainViewModel : BaseViewModel
 	public async Task Initialize()
 	{
 		await Login();
-		// Load data that needs to be available right at the start
-		LoadJobs(); // Ensure job data is loaded
-		UpdateJobCounts(); // Update the counts
-						   // Set initial values for user notes
+		
+		LoadJobs();
+		UpdateJobCounts();
+						   
 		UserNote1 = "Initial note 1";
 		UserNote2 = "Initial note 2";
 	}
 
 	private async Task Login()
 	{
-		string? username = Environment.GetEnvironmentVariable("USERNAME");
-		string? password = Environment.GetEnvironmentVariable("PASSWORD");
+		string? username = Environment.GetEnvironmentVariable("AUTH_USERNAME") ?? "CsabaBlazsek";
+		string? password = Environment.GetEnvironmentVariable("AUTH_PASSWORD") ?? "csabi?3164";
 
 		try
 		{
 			await _authService.AuthenticateAsync(username, password);
 			LoadJobs();
-			_authService.StartTokenRefreshTimer(); // Start the token refresh timer after successful login
+			_authService.StartTokenRefreshTimer();
 		}
 		catch (Exception ex)
 		{

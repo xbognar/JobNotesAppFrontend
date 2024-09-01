@@ -33,11 +33,11 @@ namespace JobNotesWPF.Models
 	{
 		private int _id;
 		private int _serialNumber;
-		private string _jobNumber;
-		private string _location;
-		private string _clientName;
+		private string? _jobNumber;
+		private string? _location;
+		private string? _clientName;
 		private DateTime? _measurementDate;
-		private string _notes;
+		private string? _notes;
 		private bool _isCompleted;
 
 		public int Id
@@ -88,7 +88,7 @@ namespace JobNotesWPF.Models
 			set => SetProperty(ref _isCompleted, value);
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
 		{
