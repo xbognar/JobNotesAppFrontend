@@ -1,29 +1,4 @@
-﻿//namespace JobNotesWPF.Models
-//{
-//	public class Job
-//	{
-
-//		public int Id { get; set; }
-
-//		public int SerialNumber { get; set; }
-
-//		public string? JobNumber { get; set; }
-
-//		public string? Location { get; set; }
-
-//		public string? ClientName { get; set; }
-
-//		public DateTime? MeasurementDate { get; set; }
-
-//		public string? Notes { get; set; }
-
-//		public bool IsCompleted { get; set; }
-
-//	}
-//}
-
-
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -52,19 +27,19 @@ namespace JobNotesWPF.Models
 			set => SetProperty(ref _serialNumber, value);
 		}
 
-		public string JobNumber
+		public string? JobNumber
 		{
 			get => _jobNumber;
 			set => SetProperty(ref _jobNumber, value);
 		}
 
-		public string Location
+		public string? Location
 		{
 			get => _location;
 			set => SetProperty(ref _location, value);
 		}
 
-		public string ClientName
+		public string? ClientName
 		{
 			get => _clientName;
 			set => SetProperty(ref _clientName, value);
@@ -76,7 +51,7 @@ namespace JobNotesWPF.Models
 			set => SetProperty(ref _measurementDate, value);
 		}
 
-		public string Notes
+		public string? Notes
 		{
 			get => _notes;
 			set => SetProperty(ref _notes, value);
@@ -85,8 +60,18 @@ namespace JobNotesWPF.Models
 		public bool IsCompleted
 		{
 			get => _isCompleted;
-			set => SetProperty(ref _isCompleted, value);
+			set
+			{
+				if (SetProperty(ref _isCompleted, value))
+				{
+					// Trigger an update to disable editing if marked as completed
+					OnPropertyChanged(nameof(IsEditable));
+				}
+			}
 		}
+
+		// Property to determine if the job can be edited
+		public bool IsEditable => !_isCompleted;
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 

@@ -94,7 +94,7 @@
                 <StackPanel Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="60,0,0,0">
                     <TextBox x:Name="SearchBox" Width="250" Height="40" Margin="0,0,10,0"
                              Style="{StaticResource SearchBarStyle}"
-                             Text="{Binding SearchLocation, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                              VerticalContentAlignment="Center"/>
                     <Popup PlacementTarget="{Binding ElementName=SearchBox}" StaysOpen="False" Width="{Binding ElementName=SearchBox, Path=ActualWidth}">
                         <ListBox ItemsSource="{Binding FilteredLocations}"
@@ -160,15 +160,11 @@
                 <ColumnDefinition Width="0.5*" />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="20,0,0,0">
-                <ComboBox Style="{StaticResource BaseComboBoxStyle}" Margin="8" Height="40" Width="130" SelectedValue="{Binding SelectedYear}">
-                    <ComboBoxItem Content="2023" />
-                    <ComboBoxItem Content="2024" />
-                    <!-- Populate this dynamically in code-behind or view model -->
+                <ComboBox Style="{StaticResource BaseComboBoxStyle}" Margin="8" Height="40" Width="130" 
+                          ItemsSource="{Binding Years}" SelectedValue="{Binding SelectedYear}">
                 </ComboBox>
-                <ComboBox Style="{StaticResource BaseComboBoxStyle}" Margin="8" Height="40" Width="130" SelectedValue="{Binding SelectedMonth}">
-                    <ComboBoxItem Content="January" />
-                    <ComboBoxItem Content="February" />
-                    <!-- Additional months -->
+                <ComboBox Style="{StaticResource BaseComboBoxStyle}" Margin="8" Height="40" Width="130" 
+                          ItemsSource="{Binding Months}" SelectedValue="{Binding SelectedMonth}">
                 </ComboBox>
                 <!-- Button with Search Icon -->
                 <Button Width="45" Style="{StaticResource BaseButtonStyle}" Height="40" Margin="8,8,50,8" Command="{Binding LoadJobsCommand}">
@@ -211,7 +207,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding IsCompleted, Mode=TwoWay}" Style="{StaticResource CheckBoxStyle}" 
-                                          Command="{Binding UpdateJobCommand}" CommandParameter="{Binding}"/>
+                                          IsEnabled="{Binding IsEditable}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
