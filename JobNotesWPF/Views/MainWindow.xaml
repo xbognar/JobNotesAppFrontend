@@ -4,7 +4,6 @@
         Title="Job Notes App" Height="800" Width="1200">
 
     <Window.Resources>
-        <!-- BooleanToVisibilityConverter -->
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Window.Resources>
 
@@ -20,13 +19,12 @@
         <!-- Define Row Definitions -->
         <Grid.RowDefinitions>
             <RowDefinition Height="66*" />
-            <!-- Top Orange Bar -->
             <RowDefinition Height="10*" />
+            <!-- Top Orange Bar -->
             <RowDefinition Height="172*" />
             <RowDefinition Height="58*" />
             <RowDefinition Height="449*" />
             <RowDefinition Height="13*" />
-            <!-- Data Grid -->
         </Grid.RowDefinitions>
 
         <!-- Navigation Panel Area with Rounded Corner Effect -->
@@ -38,35 +36,32 @@
                         <Image Source="pack://application:,,,/Resources/Images/CompanyLogo.png" Width="220" Height="112"/>
                     </StackPanel>
                     <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="25,262,0,0" Width="146">
-                        <!-- Dashboard Button -->
+                        <!-- Navigation Buttons -->
                         <Button Style="{StaticResource NavButtonStyle}" Command="{Binding AddJobCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="pack://application:,,,/Resources/Images/AddIcon.png" Width="20" Height="20" Margin="0,0,10,0"/>
                                 <TextBlock Text="Pridať" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                        <!-- Explore Button -->
                         <Button Style="{StaticResource NavButtonStyle}" Command="{Binding OpenJobListCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="pack://application:,,,/Resources/Images/ListIcon.png" Width="20" Height="20" Margin="0,0,10,0"/>
                                 <TextBlock Text="Všetky práce" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                        <!-- Dictionary Button -->
+                        <!-- Additional Buttons -->
                         <Button Style="{StaticResource NavButtonStyle}" Command="{Binding DictionaryCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="pack://application:,,,/Resources/Images/FirstIcon.png" Width="20" Height="20" Margin="0,0,10,0"/>
                                 <TextBlock Text="Nabudúce 1" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                        <!-- Schedule Button -->
                         <Button Style="{StaticResource NavButtonStyle}" Command="{Binding ScheduleCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="pack://application:,,,/Resources/Images/SecondIcon.png" Width="20" Height="20" Margin="0,0,10,0"/>
                                 <TextBlock Text="Nabudúce 2" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                        <!-- Explore Button (Again) -->
                         <Button Style="{StaticResource NavButtonStyle}" Command="{Binding ExploreCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="pack://application:,,,/Resources/Images/ThirdIcon.png" Width="20" Height="20" Margin="0,0,10,0"/>
@@ -97,13 +92,13 @@
 
                 <!-- Search TextBox with Popup for suggestions -->
                 <StackPanel Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="60,0,0,0">
-                    <TextBox x:Name="SearchBox" Width="250" Height="35" Margin="0,0,10,0" 
-                             Style="{StaticResource SearchBarStyle}" 
+                    <TextBox x:Name="SearchBox" Width="250" Height="40" Margin="0,0,10,0"
+                             Style="{StaticResource SearchBarStyle}"
                              Text="{Binding SearchLocation, UpdateSourceTrigger=PropertyChanged}"
                              VerticalContentAlignment="Center"/>
                     <Popup PlacementTarget="{Binding ElementName=SearchBox}" StaysOpen="False" Width="{Binding ElementName=SearchBox, Path=ActualWidth}">
-                        <ListBox ItemsSource="{Binding FilteredLocations}" 
-                                 SelectedItem="{Binding SelectedLocation}" 
+                        <ListBox ItemsSource="{Binding FilteredLocations}"
+                                 SelectedItem="{Binding SelectedLocation}"
                                  Visibility="{Binding IsDropDownOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -144,15 +139,15 @@
             <!-- Box 3 -->
             <Border Style="{StaticResource RoundedContainerStyle}" Grid.Column="2" Margin="5" BorderBrush="Black" BorderThickness="0.5">
                 <StackPanel>
-                    <TextBox Text="{Binding UserNote1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                        Style="{StaticResource BaseTextBoxStyle2}" />
+                    <TextBox Text="{Binding UserNote1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource BaseTextBoxStyle2}" />
                 </StackPanel>
             </Border>
             <!-- Box 4 -->
             <Border Style="{StaticResource RoundedContainerStyle}" Grid.Column="3" Margin="5" BorderBrush="Black" BorderThickness="0.5">
                 <StackPanel>
-                    <TextBox Text="{Binding UserNote2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                        Style="{StaticResource BaseTextBoxStyle2}" />
+                    <TextBox Text="{Binding UserNote2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource BaseTextBoxStyle2}" />
                 </StackPanel>
             </Border>
         </Grid>
@@ -165,25 +160,26 @@
                 <ColumnDefinition Width="0.5*" />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="20,0,0,0">
-                <ComboBox Style="{StaticResource BaseComboBoxStyle}" Margin="8" Height="35" Width="130" SelectedValue="{Binding SelectedYear}">
+                <ComboBox Style="{StaticResource BaseComboBoxStyle}" Margin="8" Height="40" Width="130" SelectedValue="{Binding SelectedYear}">
                     <ComboBoxItem Content="2023" />
                     <ComboBoxItem Content="2024" />
+                    <!-- Populate this dynamically in code-behind or view model -->
                 </ComboBox>
-                <ComboBox Style="{StaticResource BaseComboBoxStyle}" Margin="8" Height="35" Width="130" SelectedValue="{Binding SelectedMonth}">
+                <ComboBox Style="{StaticResource BaseComboBoxStyle}" Margin="8" Height="40" Width="130" SelectedValue="{Binding SelectedMonth}">
                     <ComboBoxItem Content="January" />
                     <ComboBoxItem Content="February" />
                     <!-- Additional months -->
                 </ComboBox>
                 <!-- Button with Search Icon -->
-                <Button Width="45" Style="{StaticResource BaseButtonStyle}" Height="35" Margin="8,8,50,8" Command="{Binding LoadJobsCommand}">
+                <Button Width="45" Style="{StaticResource BaseButtonStyle}" Height="40" Margin="8,8,50,8" Command="{Binding LoadJobsCommand}">
                     <Image Source="pack://application:,,,/Resources/Images/search.png" Width="16" Height="16" Opacity="0.9" />
                 </Button>
                 <!-- Button with Left Arrow Icon -->
-                <Button Width="50" Style="{StaticResource BaseButtonStyle}" Height="35" Command="{Binding NavigateLeftCommand}">
+                <Button Width="50" Style="{StaticResource BaseButtonStyle}" Height="40" Command="{Binding NavigateLeftCommand}">
                     <Image Source="pack://application:,,,/Resources/Images/angle-left.png" Width="16" Height="16" Opacity="0.9" />
                 </Button>
                 <!-- Button with Right Arrow Icon -->
-                <Button Width="50" Style="{StaticResource BaseButtonStyle}" Height="35" Command="{Binding NavigateRightCommand}">
+                <Button Width="50" Style="{StaticResource BaseButtonStyle}" Height="40" Command="{Binding NavigateRightCommand}">
                     <Image Source="pack://application:,,,/Resources/Images/angle-right.png" Width="16" Height="16" Opacity="0.9" />
                 </Button>
             </StackPanel>
@@ -197,7 +193,10 @@
         </Grid>
 
         <!-- Data Grid Section -->
-        <Border Grid.Column="2" Grid.Row="4" Margin="10,10,10,10">
+        <Border Grid.Column="2" Grid.Row="4" Margin="10,10,10,10" CornerRadius="10" BorderBrush="Gray" BorderThickness="1">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="10" Direction="320" ShadowDepth="5" Opacity="0.2"/>
+            </Border.Effect>
             <DataGrid Style="{StaticResource BaseDataGridStyle}" ItemsSource="{Binding Jobs}" AutoGenerateColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Sériové číslo" Binding="{Binding SerialNumber}" Width="*" />
@@ -208,7 +207,14 @@
                     <DataGridTextColumn Header="Poznámky" Binding="{Binding Notes}" Width="*" />
 
                     <!-- Column for the IsCompleted checkbox -->
-                    <DataGridCheckBoxColumn Header="Dokončené" Binding="{Binding IsCompleted, Mode=TwoWay}" Width="*" />
+                    <DataGridTemplateColumn Header="Dokončené" Width="Auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsCompleted, Mode=TwoWay}" Style="{StaticResource CheckBoxStyle}" 
+                                          Command="{Binding UpdateJobCommand}" CommandParameter="{Binding}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
                     <!-- Column for the delete button with trash icon -->
                     <DataGridTemplateColumn Header="Odstrániť" Width="Auto">
