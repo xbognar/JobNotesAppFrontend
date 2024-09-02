@@ -256,34 +256,34 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Background" Value="White" />
         <Setter Property="HorizontalAlignment" Value="Center" />
-        <Setter Property="Template">
+        <!--<Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBox">
                     <Grid>
                         <Border Name="Border"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="10">
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="10">
                             <Border.Effect>
-                                <DropShadowEffect Color="{StaticResource ShadowColor}" 
-                                                  BlurRadius="8" 
-                                                  ShadowDepth="2"
-                                                  Direction="315" />
+                                <DropShadowEffect Color="#888888" 
+                                              BlurRadius="5" 
+                                              ShadowDepth="2"
+                                              Opacity="0.5"/>
                             </Border.Effect>
                             <Grid>
                                 <ContentPresenter Margin="10,0,0,0" 
-                                                  HorizontalAlignment="Left"
-                                                  VerticalAlignment="Center"/>
+                                              HorizontalAlignment="Left"
+                                              VerticalAlignment="Center"/>
                                 <ToggleButton Grid.Column="1"
-                                              Background="Transparent"
-                                              BorderBrush="Transparent"
-                                              IsChecked="{Binding Path=IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
-                                    <Path Fill="{StaticResource ButtonTextBrush}" 
-                                          Data="M 0 0 L 4 4 L 8 0 Z" 
-                                          Width="8" Height="4" 
-                                          HorizontalAlignment="Right" 
-                                          Margin="0,0,10,0" />
+                                          Background="Transparent"
+                                          BorderBrush="Transparent"
+                                          IsChecked="{Binding Path=IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                                    <Path Fill="#333333" 
+                                      Data="M 0 0 L 4 4 L 8 0 Z" 
+                                      Width="8" Height="4" 
+                                      HorizontalAlignment="Right" 
+                                      Margin="0,0,10,0" />
                                 </ToggleButton>
                             </Grid>
                         </Border>
@@ -291,29 +291,72 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Setter Property="ItemTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" Padding="10" FontFamily="Segoe UI" FontSize="14"/>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>-->
     </Style>
 
-    <!-- Striped Pattern for Completed Rows -->
-    <VisualBrush x:Key="StripedPattern" TileMode="Tile" Viewport="0,0,20,20" ViewportUnits="Absolute">
-        <VisualBrush.Visual>
-            <Rectangle Width="10" Height="20" Fill="Transparent">
+
+    <!-- Enhanced Striped Pattern for Completed Rows -->
+<VisualBrush x:Key="EnhancedStripedPattern" TileMode="Tile" Viewport="0,0,20,20" ViewportUnits="Absolute">
+    <VisualBrush.Visual>
+        <Grid Background="Transparent">
+            <!-- Striped pattern using diagonal lines -->
+            <Rectangle Width="20" Height="20" Fill="Transparent">
                 <Rectangle.Stroke>
                     <DrawingBrush>
                         <DrawingBrush.Drawing>
-                            <GeometryDrawing Brush="Transparent">
-                                <GeometryDrawing.Geometry>
-                                    <LineGeometry StartPoint="0,0" EndPoint="20,20" />
-                                </GeometryDrawing.Geometry>
-                                <GeometryDrawing.Pen>
-                                    <Pen Brush="{StaticResource HighlightBrush}" Thickness="2" />
-                                </GeometryDrawing.Pen>
-                            </GeometryDrawing>
+                            <DrawingGroup>
+                                <!-- Adjusted to ensure lines cover more area -->
+                                <GeometryDrawing Brush="Transparent">
+                                    <GeometryDrawing.Geometry>
+                                        <LineGeometry StartPoint="0,20" EndPoint="20,0" />
+                                    </GeometryDrawing.Geometry>
+                                    <GeometryDrawing.Pen>
+                                        <Pen Brush="#FFA726" Thickness="14" />
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                                <!-- Adding more lines to ensure coverage -->
+                                <GeometryDrawing Brush="Transparent">
+                                    <GeometryDrawing.Geometry>
+                                        <LineGeometry StartPoint="10,20" EndPoint="30,0" />
+                                    </GeometryDrawing.Geometry>
+                                    <GeometryDrawing.Pen>
+                                        <Pen Brush="#FFA726" Thickness="14" />
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                                <GeometryDrawing Brush="Transparent">
+                                    <GeometryDrawing.Geometry>
+                                        <LineGeometry StartPoint="-10,20" EndPoint="10,0" />
+                                    </GeometryDrawing.Geometry>
+                                    <GeometryDrawing.Pen>
+                                        <Pen Brush="#FFA726" Thickness="14" />
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                                <GeometryDrawing Brush="Transparent">
+                                    <GeometryDrawing.Geometry>
+                                        <LineGeometry StartPoint="20,20" EndPoint="40,0" />
+                                    </GeometryDrawing.Geometry>
+                                    <GeometryDrawing.Pen>
+                                        <Pen Brush="#FFA726" Thickness="14" />
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                            </DrawingGroup>
                         </DrawingBrush.Drawing>
                     </DrawingBrush>
                 </Rectangle.Stroke>
             </Rectangle>
-        </VisualBrush.Visual>
-    </VisualBrush>
+        </Grid>
+    </VisualBrush.Visual>
+</VisualBrush>
+
+
+
+
 
     <!-- Checkbox Style -->
     <Style x:Key="CheckBoxStyle" TargetType="CheckBox">

@@ -193,21 +193,45 @@
             <Border.Effect>
                 <DropShadowEffect Color="Black" BlurRadius="10" Direction="320" ShadowDepth="5" Opacity="0.2"/>
             </Border.Effect>
-            <DataGrid Style="{StaticResource BaseDataGridStyle}" ItemsSource="{Binding Jobs}" AutoGenerateColumns="False">
+            <DataGrid Style="{StaticResource BaseDataGridStyle}" 
+          ItemsSource="{Binding Jobs}" 
+          AutoGenerateColumns="False" 
+          IsReadOnly="False"
+          TextElement.FontSize="16" 
+          TextElement.FontFamily="Segoe UI">
+
+                <!-- Ensure the text is centered -->
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                    </Style>
+                </DataGrid.CellStyle>
+
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Sériové číslo" Binding="{Binding SerialNumber}" Width="*" />
-                    <DataGridTextColumn Header="Číslo práce" Binding="{Binding JobNumber}" Width="*" />
-                    <DataGridTextColumn Header="Miesto" Binding="{Binding Location}" Width="*" />
-                    <DataGridTextColumn Header="Meno klienta" Binding="{Binding ClientName}" Width="*" />
-                    <DataGridTextColumn Header="Dátum merania" Binding="{Binding MeasurementDate, StringFormat=dd/MM/yyyy}" Width="*" />
-                    <DataGridTextColumn Header="Poznámky" Binding="{Binding Notes}" Width="*" />
+                    <!-- Editable Serial Number Column -->
+                    <DataGridTextColumn Header="Sériové číslo" Binding="{Binding SerialNumber, Mode=TwoWay}" Width="*" />
+
+                    <!-- Editable Job Number Column -->
+                    <DataGridTextColumn Header="Číslo práce" Binding="{Binding JobNumber, Mode=TwoWay}" Width="*" />
+
+                    <!-- Editable Location Column -->
+                    <DataGridTextColumn Header="Miesto" Binding="{Binding Location, Mode=TwoWay}" Width="*" />
+
+                    <!-- Editable Client Name Column -->
+                    <DataGridTextColumn Header="Meno klienta" Binding="{Binding ClientName, Mode=TwoWay}" Width="*" />
+
+                    <!-- Editable Measurement Date Column -->
+                    <DataGridTextColumn Header="Dátum merania" Binding="{Binding MeasurementDate, Mode=TwoWay, StringFormat=dd/MM/yyyy}" Width="*" />
+
+                    <!-- Editable Notes Column -->
+                    <DataGridTextColumn Header="Poznámky" Binding="{Binding Notes, Mode=TwoWay}" Width="*" />
 
                     <!-- Column for the IsCompleted checkbox -->
                     <DataGridTemplateColumn Header="Dokončené" Width="Auto">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsCompleted, Mode=TwoWay}" Style="{StaticResource CheckBoxStyle}" 
-                                          IsEnabled="{Binding IsEditable}"/>
+                                <CheckBox IsChecked="{Binding IsCompleted, Mode=TwoWay}" Style="{StaticResource CheckBoxStyle}" IsEnabled="{Binding IsEditable}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -228,16 +252,15 @@
                     <Style TargetType="DataGridRow">
                         <Setter Property="Background" Value="White" />
                         <Style.Triggers>
-                            <!-- Change the background to striped when the job is completed -->
+                            <!-- Apply the enhanced striped pattern when the job is completed -->
                             <DataTrigger Binding="{Binding IsCompleted}" Value="True">
-                                <Setter Property="Background" Value="{StaticResource StripedPattern}" />
-                                <Setter Property="IsEnabled" Value="False" />
+                                <Setter Property="Background" Value="{StaticResource EnhancedStripedPattern}" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </DataGrid.RowStyle>
-
             </DataGrid>
+
         </Border>
 
     </Grid>

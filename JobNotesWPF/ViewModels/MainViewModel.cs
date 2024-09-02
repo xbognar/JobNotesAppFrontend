@@ -5,7 +5,6 @@ using JobNotesWPF.Views;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.ObjectModel;
-using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,10 +16,10 @@ public class MainViewModel : BaseViewModel
 	private readonly IAuthenticationService _authService;
 	private readonly IServiceProvider _serviceProvider;
 	private readonly int _currentYear = DateTime.Now.Year;
-	private readonly int _currentMonth = DateTime.Now.Month;
+	private readonly string _currentMonth = DateTime.Now.ToString("MMMM");
 
 	private int _selectedYear;
-	private int _selectedMonth;
+	private string _selectedMonth;
 	private string _searchText;
 	private string _userNote1;
 	private string _userNote2;
@@ -69,7 +68,7 @@ public class MainViewModel : BaseViewModel
 		}
 	}
 
-	public int SelectedMonth
+	public string SelectedMonth
 	{
 		get => _selectedMonth;
 		set
@@ -125,11 +124,9 @@ public class MainViewModel : BaseViewModel
 		Jobs = new ObservableCollection<Job>();
 
 		Years = new ObservableCollection<int>(Enumerable.Range(2020, 31));
-		Months = new ObservableCollection<string>(new[]
-		{
-			"Január", "Február", "Marec", "Apríl", "Máj", "Jún",
-			"Júl", "August", "September", "Október", "November", "December"
-		});
+		Months = new ObservableCollection<string>(System.Globalization.CultureInfo.InvariantCulture.DateTimeFormat.MonthNames
+													.Where(m => !string.IsNullOrEmpty(m))
+													.ToArray());
 
 		SelectedYear = _currentYear;
 		SelectedMonth = _currentMonth;
@@ -147,6 +144,8 @@ public class MainViewModel : BaseViewModel
 		ExitCommand = new RelayCommand(ExitApplication);
 
 		LoadUserNotes();
+		LoadJobs();
+		UpdateJobCounts();
 	}
 
 	public async Task Initialize()
@@ -164,7 +163,6 @@ public class MainViewModel : BaseViewModel
 		try
 		{
 			await _authService.AuthenticateAsync(username, password);
-			LoadJobs();
 			_authService.StartTokenRefreshTimer();
 		}
 		catch (Exception ex)
@@ -177,16 +175,13 @@ public class MainViewModel : BaseViewModel
 	{
 		if (string.IsNullOrWhiteSpace(SearchText))
 		{
-			LoadJobs();
+			LoadJobs(); // Reset to default view when search text is empty
 		}
 		else
 		{
 			Jobs.Clear();
 			var allJobs = await _jobService.GetJobsAsync();
-			var filteredJobs = allJobs.Where(j => j.Location != null && j.Location.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
-				&& j.MeasurementDate.HasValue
-				&& j.MeasurementDate.Value.Year == SelectedYear
-				&& j.MeasurementDate.Value.Month == SelectedMonth).ToList();
+			var filteredJobs = allJobs.Where(j => j.Location != null && j.Location.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
 
 			foreach (var job in filteredJobs)
 			{
@@ -202,7 +197,7 @@ public class MainViewModel : BaseViewModel
 		var allJobs = await _jobService.GetJobsAsync();
 		var jobsForSelectedDate = allJobs.Where(j => j.MeasurementDate.HasValue
 													 && j.MeasurementDate.Value.Year == SelectedYear
-													 && j.MeasurementDate.Value.Month == SelectedMonth).ToList();
+													 && j.MeasurementDate.Value.ToString("MMMM") == SelectedMonth).ToList();
 
 		foreach (var job in jobsForSelectedDate)
 		{
@@ -214,10 +209,37 @@ public class MainViewModel : BaseViewModel
 
 	private async void AddJob()
 	{
-		var newJob = new Job { IsCompleted = false };
+		var newSerialNumber = await GetNextSerialNumber();
+
+		var newJob = new Job
+		{
+			SerialNumber = newSerialNumber, // Set calculated SerialNumber
+			JobNumber = "nusll", // Optional, can be set later
+			Location = null, // Optional, can be set later
+			ClientName = null, // Optional, can be set later
+			MeasurementDate = null, // Optional, can be set later
+			Notes = null, // Optional, can be set later
+			IsCompleted = false // Default completion status
+		};
+
 		await _jobService.AddJobAsync(newJob);
 		Jobs.Add(newJob);
 		UpdateJobCounts();
+	}
+
+	private async Task<int> GetNextSerialNumber()
+	{
+		var currentYear = DateTime.Now.Year;
+		var allJobs = await _jobService.GetJobsAsync();
+
+		// Get the jobs for the current year
+		var currentYearJobs = allJobs.Where(j => j.MeasurementDate.HasValue && j.MeasurementDate.Value.Year == currentYear);
+
+		// Find the maximum SerialNumber in the current year jobs
+		var maxSerialNumber = currentYearJobs.Any() ? currentYearJobs.Max(j => j.SerialNumber) : 0;
+
+		// Increment SerialNumber by 1 or start from 1 if no jobs found
+		return maxSerialNumber + 1;
 	}
 
 	private async void DeleteJob(Job job)
@@ -258,17 +280,19 @@ public class MainViewModel : BaseViewModel
 
 	private void NavigateLeft()
 	{
-		if (_selectedMonth == 1)
+		int monthIndex = Array.IndexOf(System.Globalization.CultureInfo.InvariantCulture.DateTimeFormat.MonthNames, _selectedMonth) + 1;
+
+		if (monthIndex == 1)
 		{
 			if (_selectedYear > Years.Min())
 			{
 				SelectedYear--;
-				SelectedMonth = 12;
+				SelectedMonth = "December";
 			}
 		}
 		else
 		{
-			SelectedMonth--;
+			SelectedMonth = Months[monthIndex - 2];
 		}
 
 		LoadJobs();
@@ -276,17 +300,19 @@ public class MainViewModel : BaseViewModel
 
 	private void NavigateRight()
 	{
-		if (_selectedMonth == 12)
+		int monthIndex = Array.IndexOf(System.Globalization.CultureInfo.InvariantCulture.DateTimeFormat.MonthNames, _selectedMonth) + 1;
+
+		if (monthIndex == 12)
 		{
 			if (_selectedYear < Years.Max())
 			{
 				SelectedYear++;
-				SelectedMonth = 1;
+				SelectedMonth = "January";
 			}
 		}
 		else
 		{
-			SelectedMonth++;
+			SelectedMonth = Months[monthIndex];
 		}
 
 		LoadJobs();
@@ -294,7 +320,7 @@ public class MainViewModel : BaseViewModel
 
 	private void UpdateJobCounts()
 	{
-		MonthlyJobCount = Jobs.Count(j => j.MeasurementDate?.Year == SelectedYear && j.MeasurementDate?.Month == SelectedMonth);
+		MonthlyJobCount = Jobs.Count(j => j.MeasurementDate?.Year == SelectedYear && j.MeasurementDate?.ToString("MMMM") == SelectedMonth);
 		YearlyJobCount = Jobs.Count(j => j.MeasurementDate?.Year == SelectedYear);
 	}
 
