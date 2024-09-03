@@ -3,31 +3,17 @@
 
     <!-- Base Colors -->
     <Color x:Key="PrimaryColor">#FFA726</Color>
-    <!-- Orange for primary elements -->
     <Color x:Key="SecondaryColor">#4A4A4A</Color>
-    <!-- Dark grey for secondary elements -->
     <Color x:Key="HighlightColor">#FFA726</Color>
-    <!-- Same as primary for highlights -->
     <Color x:Key="TextColor">#FFFFFF</Color>
-    <!-- White text for dark backgrounds -->
     <Color x:Key="TextPrimary">#000000</Color>
-    <!-- Black text for primary content -->
     <Color x:Key="TextSecondary">#616161</Color>
-    <!-- Grey text for secondary content -->
     <Color x:Key="CompletedJobBackgroundColor">#FFF3E0</Color>
-    <!-- Light orange for completed jobs -->
     <Color x:Key="UncompletedJobBackgroundColor">#FFFFFF</Color>
-    <!-- White for uncompleted jobs -->
     <Color x:Key="BorderColor">#E0E0E0</Color>
-    <!-- Light grey for borders -->
     <Color x:Key="NavigationColor">#323232</Color>
-    <!-- Dark color for navigation -->
     <Color x:Key="TableHeaderColor">#FFA726</Color>
-    <!-- Orange for table headers -->
-
-    <!-- Colors for Shadows -->
     <Color x:Key="ShadowColor">#D3D3D3</Color>
-    <!-- Light shadow color -->
 
     <!-- Brushes -->
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" />
@@ -61,9 +47,12 @@
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
         <Setter Property="TextWrapping" Value="Wrap" />
         <Setter Property="Padding" Value="10,5" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrushColor}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Background" Value="White" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <!-- Set border to transparent -->
+        <Setter Property="BorderThickness" Value="0" />
+        <!-- Remove border thickness -->
+        <Setter Property="Background" Value="Transparent" />
+        <!-- Set background to transparent -->
     </Style>
 
     <!-- Current Date Text Style -->
@@ -159,22 +148,17 @@
         <Setter Property="IsReadOnly" Value="True" />
         <Setter Property="HeadersVisibility" Value="Column" />
         <Setter Property="GridLinesVisibility" Value="None" />
-        <Setter Property="RowBackground" Value="White" />
-        <Setter Property="AlternatingRowBackground" Value="#F7F7F7" />
-        <Setter Property="BorderBrush" Value="Gray" />
+        <Setter Property="RowBackground" Value="{StaticResource UncompletedJobBackgroundBrush}" />
+        <Setter Property="AlternatingRowBackground" Value="{StaticResource CompletedJobBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="White" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="10" />
-        <Setter Property="Effect">
-            <Setter.Value>
-                <DropShadowEffect Color="Black" BlurRadius="10" Direction="320" ShadowDepth="5" Opacity="0.2"/>
-            </Setter.Value>
-        </Setter>
         <Setter Property="ColumnHeaderStyle">
             <Setter.Value>
                 <Style TargetType="DataGridColumnHeader">
                     <Setter Property="Background" Value="{StaticResource TableHeaderBrush}" />
                     <Setter Property="Foreground" Value="White" />
-                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="FontSize" Value="15" />
                     <Setter Property="FontFamily" Value="Segoe UI" />
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
                     <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -222,7 +206,6 @@
             </Setter.Value>
         </Setter>
         <Style.Triggers>
-            <!-- Trigger for MouseDown (click) -->
             <Trigger Property="IsPressed" Value="True">
                 <Trigger.EnterActions>
                     <BeginStoryboard>
@@ -244,119 +227,109 @@
         </Style.Triggers>
     </Style>
 
-    <!-- ComboBox Style -->
+    <!-- ComboBox Style for Rounded Corners and Drop Shadow -->
     <Style x:Key="BaseComboBoxStyle" TargetType="ComboBox">
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FontFamily" Value="Segoe UI" />
-        <Setter Property="Margin" Value="5" />
-        <Setter Property="Padding" Value="5" />
+        <Setter Property="Margin" Value="10" />
+        <Setter Property="Padding" Value="10,5" />
         <Setter Property="Height" Value="40" />
         <Setter Property="Width" Value="150" />
-        <Setter Property="BorderBrush" Value="{StaticResource ComboBoxBorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="Gray" />
+        <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Background" Value="White" />
         <Setter Property="HorizontalAlignment" Value="Center" />
-        <!--<Setter Property="Template">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBox">
                     <Grid>
                         <Border Name="Border"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="10">
+                            BorderThickness="0"
+                            CornerRadius="10"
+                            SnapsToDevicePixels="True"
+                            Padding="{TemplateBinding Padding}">
                             <Border.Effect>
-                                <DropShadowEffect Color="#888888" 
-                                              BlurRadius="5" 
-                                              ShadowDepth="2"
-                                              Opacity="0.5"/>
+                                <DropShadowEffect BlurRadius="8" ShadowDepth="2" Opacity="0.2" />
                             </Border.Effect>
                             <Grid>
-                                <ContentPresenter Margin="10,0,0,0" 
+                                <ContentPresenter Margin="10,0,0,0"
                                               HorizontalAlignment="Left"
                                               VerticalAlignment="Center"/>
                                 <ToggleButton Grid.Column="1"
                                           Background="Transparent"
                                           BorderBrush="Transparent"
                                           IsChecked="{Binding Path=IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
-                                    <Path Fill="#333333" 
-                                      Data="M 0 0 L 4 4 L 8 0 Z" 
-                                      Width="8" Height="4" 
-                                      HorizontalAlignment="Right" 
+                                    <Path Fill="Gray"
+                                      Data="M 0 0 L 4 4 L 8 0 Z"
+                                      Width="8" Height="4"
+                                      HorizontalAlignment="Right"
                                       Margin="0,0,10,0" />
                                 </ToggleButton>
                             </Grid>
                         </Border>
+                        <Popup Name="Popup"
+                           Placement="Bottom"
+                           IsOpen="{TemplateBinding IsDropDownOpen}"
+                           AllowsTransparency="True"
+                           Focusable="False"
+                           PopupAnimation="Slide">
+                            <Grid Name="DropDown"
+                              SnapsToDevicePixels="True"
+                              MinWidth="{TemplateBinding ActualWidth}"
+                              MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                <Border Name="DropDownBorder"
+                                    Background="White"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="1">
+                                    <ScrollViewer Margin="4"
+                                              SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True"
+                                                KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Border>
+                            </Grid>
+                        </Popup>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Setter Property="ItemTemplate">
-            <Setter.Value>
-                <DataTemplate>
-                    <TextBlock Text="{Binding}" Padding="10" FontFamily="Segoe UI" FontSize="14"/>
-                </DataTemplate>
-            </Setter.Value>
-        </Setter>-->
     </Style>
 
 
-    <!-- Enhanced Striped Pattern for Completed Rows -->
-<VisualBrush x:Key="EnhancedStripedPattern" TileMode="Tile" Viewport="0,0,20,20" ViewportUnits="Absolute">
-    <VisualBrush.Visual>
-        <Grid Background="Transparent">
-            <!-- Striped pattern using diagonal lines -->
-            <Rectangle Width="20" Height="20" Fill="Transparent">
-                <Rectangle.Stroke>
-                    <DrawingBrush>
-                        <DrawingBrush.Drawing>
-                            <DrawingGroup>
-                                <!-- Adjusted to ensure lines cover more area -->
-                                <GeometryDrawing Brush="Transparent">
-                                    <GeometryDrawing.Geometry>
-                                        <LineGeometry StartPoint="0,20" EndPoint="20,0" />
-                                    </GeometryDrawing.Geometry>
-                                    <GeometryDrawing.Pen>
-                                        <Pen Brush="#FFA726" Thickness="14" />
-                                    </GeometryDrawing.Pen>
-                                </GeometryDrawing>
-                                <!-- Adding more lines to ensure coverage -->
-                                <GeometryDrawing Brush="Transparent">
-                                    <GeometryDrawing.Geometry>
-                                        <LineGeometry StartPoint="10,20" EndPoint="30,0" />
-                                    </GeometryDrawing.Geometry>
-                                    <GeometryDrawing.Pen>
-                                        <Pen Brush="#FFA726" Thickness="14" />
-                                    </GeometryDrawing.Pen>
-                                </GeometryDrawing>
-                                <GeometryDrawing Brush="Transparent">
-                                    <GeometryDrawing.Geometry>
-                                        <LineGeometry StartPoint="-10,20" EndPoint="10,0" />
-                                    </GeometryDrawing.Geometry>
-                                    <GeometryDrawing.Pen>
-                                        <Pen Brush="#FFA726" Thickness="14" />
-                                    </GeometryDrawing.Pen>
-                                </GeometryDrawing>
-                                <GeometryDrawing Brush="Transparent">
-                                    <GeometryDrawing.Geometry>
-                                        <LineGeometry StartPoint="20,20" EndPoint="40,0" />
-                                    </GeometryDrawing.Geometry>
-                                    <GeometryDrawing.Pen>
-                                        <Pen Brush="#FFA726" Thickness="14" />
-                                    </GeometryDrawing.Pen>
-                                </GeometryDrawing>
-                            </DrawingGroup>
-                        </DrawingBrush.Drawing>
-                    </DrawingBrush>
-                </Rectangle.Stroke>
-            </Rectangle>
-        </Grid>
-    </VisualBrush.Visual>
-</VisualBrush>
+    <!-- Enhanced Pattern with Five Horizontal Thick Lines for Completed Rows -->
+    <VisualBrush x:Key="EnhancedStripedPattern" TileMode="None">
+        <VisualBrush.Visual>
+            <Grid Background="White" Width="60" Height="60">
+                <!-- Define the grid with sufficient row space -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                </Grid.RowDefinitions>
 
+                <!-- First horizontal line -->
+                <Rectangle Grid.Row="0" Fill="{StaticResource PrimaryBrush}" Height="8" VerticalAlignment="Center"/>
 
+                <!-- Second horizontal line -->
+                <Rectangle Grid.Row="1" Fill="{StaticResource PrimaryBrush}" Height="8" VerticalAlignment="Center"/>
 
+                <!-- Third horizontal line -->
+                <Rectangle Grid.Row="2" Fill="{StaticResource PrimaryBrush}" Height="8" VerticalAlignment="Center"/>
 
+                <!-- Fourth horizontal line -->
+                <Rectangle Grid.Row="3" Fill="{StaticResource PrimaryBrush}" Height="8" VerticalAlignment="Center"/>
+
+                <!-- Fifth horizontal line -->
+                <Rectangle Grid.Row="4" Fill="{StaticResource PrimaryBrush}" Height="8" VerticalAlignment="Center"/>
+            </Grid>
+        </VisualBrush.Visual>
+    </VisualBrush>
 
     <!-- Checkbox Style -->
     <Style x:Key="CheckBoxStyle" TargetType="CheckBox">
@@ -379,6 +352,14 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- DataGridCell Style for Centered Text -->
+    <Style x:Key="CenteredDataGridCellStyle" TargetType="DataGridCell">
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="10,5" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
     </Style>
 
 </ResourceDictionary>

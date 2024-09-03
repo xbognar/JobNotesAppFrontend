@@ -24,5 +24,6 @@ namespace JobNotesWPF.Views
             InitializeComponent();
             DataContext = mainViewModel;
         }
-    }
+
+	}
 }

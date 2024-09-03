@@ -124,31 +124,53 @@
             </Grid.ColumnDefinitions>
             <!-- Box 1 -->
             <Border Style="{StaticResource RoundedContainerStyle}" Grid.Column="0" Margin="5" BorderBrush="Black" BorderThickness="0.5">
-                <StackPanel>
-                    <TextBlock Text="Počet mesačných prác:" Style="{StaticResource BaseTextBlockStyle}" />
-                    <TextBlock Text="{Binding MonthlyJobCount}" FontSize="50" FontWeight="Bold" />
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="0.9*" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.5*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Počet mesačných prác:" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Grid.Column="0"  Grid.Row="0" Grid.ColumnSpan="2"/>
+                    <TextBlock Text="{Binding MonthlyJobCount}" FontSize="50" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="1"/>
+                </Grid>
             </Border>
+
             <!-- Box 2 -->
             <Border Style="{StaticResource RoundedContainerStyle}" Grid.Column="1" Margin="5" BorderBrush="Black" BorderThickness="0.5">
-                <StackPanel>
-                    <TextBlock Text="Počet ročných prác:" Style="{StaticResource BaseTextBlockStyle}" />
-                    <TextBlock Text="{Binding YearlyJobCount}" FontSize="50" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" />
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="0.9*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.5*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Počet ročných prác:" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Grid.Column="0"  Grid.Row="0" Grid.ColumnSpan="2" />
+                    <TextBlock Text="{Binding YearlyJobCount}" FontSize="50" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="1"/>
+                </Grid>
             </Border>
-            <!-- Box 3 -->
+            <!-- Box 3 with ScrollViewer -->
             <Border Style="{StaticResource RoundedContainerStyle}" Grid.Column="2" Margin="5" BorderBrush="Black" BorderThickness="0.5">
-                <StackPanel>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <TextBox Text="{Binding UserNote1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             Style="{StaticResource BaseTextBoxStyle2}" />
-                </StackPanel>
+                 Style="{StaticResource BaseTextBoxStyle2}"
+                 AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+                </ScrollViewer>
             </Border>
-            <!-- Box 4 -->
+
+            <!-- Box 4 with ScrollViewer -->
             <Border Style="{StaticResource RoundedContainerStyle}" Grid.Column="3" Margin="5" BorderBrush="Black" BorderThickness="0.5">
-                <StackPanel>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <TextBox Text="{Binding UserNote2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             Style="{StaticResource BaseTextBoxStyle2}" />
-                </StackPanel>
+                 Style="{StaticResource BaseTextBoxStyle2}"
+                 AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+                </ScrollViewer>
             </Border>
         </Grid>
 
@@ -161,10 +183,10 @@
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="20,0,0,0">
                 <ComboBox Style="{StaticResource BaseComboBoxStyle}" Margin="8" Height="40" Width="130" 
-                          ItemsSource="{Binding Years}" SelectedValue="{Binding SelectedYear}">
+                          ItemsSource="{Binding Years}" SelectedValue="{Binding SelectedYear, Mode=TwoWay}">
                 </ComboBox>
                 <ComboBox Style="{StaticResource BaseComboBoxStyle}" Margin="8" Height="40" Width="130" 
-                          ItemsSource="{Binding Months}" SelectedValue="{Binding SelectedMonth}">
+                          ItemsSource="{Binding Months}" SelectedValue="{Binding SelectedMonth, Mode=TwoWay}">
                 </ComboBox>
                 <!-- Button with Search Icon -->
                 <Button Width="45" Style="{StaticResource BaseButtonStyle}" Height="40" Margin="8,8,50,8" Command="{Binding LoadJobsCommand}">
@@ -188,32 +210,42 @@
             </Button>
         </Grid>
 
-        <!-- Data Grid Section -->
-        <Border Grid.Column="2" Grid.Row="4" Margin="10,10,10,10" CornerRadius="10" BorderBrush="Gray" BorderThickness="1">
+        <Border Grid.Column="2" Grid.Row="4" Margin="10,10,10,10" CornerRadius="10" BorderBrush="{StaticResource BorderBrushColor}" BorderThickness="1" Background="White">
             <Border.Effect>
                 <DropShadowEffect Color="Black" BlurRadius="10" Direction="320" ShadowDepth="5" Opacity="0.2"/>
             </Border.Effect>
             <DataGrid Style="{StaticResource BaseDataGridStyle}" 
-          ItemsSource="{Binding Jobs}" 
-          AutoGenerateColumns="False" 
-          IsReadOnly="False"
-          TextElement.FontSize="16" 
-          TextElement.FontFamily="Segoe UI">
+                      ItemsSource="{Binding Jobs}" 
+                      AutoGenerateColumns="False" 
+                      IsReadOnly="False"
+                      TextElement.FontSize="16" 
+                      TextElement.FontFamily="Segoe UI"
+                      RowBackground="{StaticResource UncompletedJobBackgroundBrush}"
+                      AlternatingRowBackground="{StaticResource CompletedJobBackgroundBrush}"
+                      Background="White"
+                      CellStyle="{StaticResource CenteredDataGridCellStyle}">
 
-                <!-- Ensure the text is centered -->
-                <DataGrid.CellStyle>
-                    <Style TargetType="DataGridCell">
+                <!-- Header Style -->
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="{StaticResource TableHeaderBrush}" />
+                        <Setter Property="Foreground" Value="White" />
+                        <Setter Property="FontSize" Value="14" />
+                        <Setter Property="FontWeight" Value="Bold" />
                         <Setter Property="HorizontalContentAlignment" Value="Center" />
                         <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="Padding" Value="10,5" />
+                        <Setter Property="BorderBrush" Value="{StaticResource BorderBrushColor}" />
+                        <Setter Property="BorderThickness" Value="0,0,1,1" />
                     </Style>
-                </DataGrid.CellStyle>
+                </DataGrid.ColumnHeaderStyle>
 
                 <DataGrid.Columns>
                     <!-- Editable Serial Number Column -->
-                    <DataGridTextColumn Header="Sériové číslo" Binding="{Binding SerialNumber, Mode=TwoWay}" Width="*" />
+                    <DataGridTextColumn Header="Sér. č." Binding="{Binding SerialNumber, Mode=TwoWay}" Width="0.6*" />
 
                     <!-- Editable Job Number Column -->
-                    <DataGridTextColumn Header="Číslo práce" Binding="{Binding JobNumber, Mode=TwoWay}" Width="*" />
+                    <DataGridTextColumn Header="Č. práce" Binding="{Binding JobNumber, Mode=TwoWay}" Width="0.6*" />
 
                     <!-- Editable Location Column -->
                     <DataGridTextColumn Header="Miesto" Binding="{Binding Location, Mode=TwoWay}" Width="*" />
@@ -240,7 +272,10 @@
                     <DataGridTemplateColumn Header="Odstrániť" Width="Auto">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Command="{Binding DataContext.DeleteJobCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}">
+                                <Button Command="{Binding DataContext.DeleteJobCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                CommandParameter="{Binding}" 
+                                Background="Transparent" 
+                                BorderBrush="Transparent">
                                     <Image Source="pack://application:,,,/Resources/Images/trash.png" Width="16" Height="16" />
                                 </Button>
                             </DataTemplate>
@@ -250,7 +285,9 @@
 
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
-                        <Setter Property="Background" Value="White" />
+                        <Setter Property="Background" Value="{StaticResource UncompletedJobBackgroundBrush}" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Height" Value="40" />
                         <Style.Triggers>
                             <!-- Apply the enhanced striped pattern when the job is completed -->
                             <DataTrigger Binding="{Binding IsCompleted}" Value="True">
@@ -260,7 +297,6 @@
                     </Style>
                 </DataGrid.RowStyle>
             </DataGrid>
-
         </Border>
 
     </Grid>

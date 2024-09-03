@@ -36,6 +36,32 @@ public class MainViewModel : BaseViewModel
 		set => SetProperty(ref _filteredLocations, value);
 	}
 
+	public int SelectedYear
+	{
+		get => _selectedYear;
+		set => SetProperty(ref _selectedYear, value);
+	}
+
+	public string SelectedMonth
+	{
+		get => _selectedMonth;
+		set => SetProperty(ref _selectedMonth, value);
+	}
+
+	private int _monthlyJobCount;
+	public int MonthlyJobCount
+	{
+		get => _monthlyJobCount;
+		set => SetProperty(ref _monthlyJobCount, value);
+	}
+
+	private int _yearlyJobCount;
+	public int YearlyJobCount
+	{
+		get => _yearlyJobCount;
+		set => SetProperty(ref _yearlyJobCount, value);
+	}
+
 	public string UserNote1
 	{
 		get => _userNote1;
@@ -56,30 +82,6 @@ public class MainViewModel : BaseViewModel
 		}
 	}
 
-	public int SelectedYear
-	{
-		get => _selectedYear;
-		set
-		{
-			if (SetProperty(ref _selectedYear, value))
-			{
-				LoadJobs(); // Reload jobs based on the selected year
-			}
-		}
-	}
-
-	public string SelectedMonth
-	{
-		get => _selectedMonth;
-		set
-		{
-			if (SetProperty(ref _selectedMonth, value))
-			{
-				LoadJobs(); // Reload jobs based on the selected month
-			}
-		}
-	}
-
 	public string SearchText
 	{
 		get => _searchText;
@@ -87,7 +89,7 @@ public class MainViewModel : BaseViewModel
 		{
 			if (SetProperty(ref _searchText, value))
 			{
-				SearchJobs(); // Trigger search logic whenever the search text changes
+				SearchJobs();
 			}
 		}
 	}
@@ -102,36 +104,21 @@ public class MainViewModel : BaseViewModel
 	public ICommand LogoutCommand { get; }
 	public ICommand ExitCommand { get; }
 
-	private int _monthlyJobCount;
-	public int MonthlyJobCount
-	{
-		get => _monthlyJobCount;
-		set => SetProperty(ref _monthlyJobCount, value);
-	}
-
-	private int _yearlyJobCount;
-	public int YearlyJobCount
-	{
-		get => _yearlyJobCount;
-		set => SetProperty(ref _yearlyJobCount, value);
-	}
-
 	public MainViewModel(IJobService jobService, IAuthenticationService authService, IServiceProvider serviceProvider)
 	{
 		_jobService = jobService;
 		_authService = authService;
 		_serviceProvider = serviceProvider;
-		Jobs = new ObservableCollection<Job>();
-
-		Years = new ObservableCollection<int>(Enumerable.Range(2020, 31));
-		Months = new ObservableCollection<string>(System.Globalization.CultureInfo.InvariantCulture.DateTimeFormat.MonthNames
-													.Where(m => !string.IsNullOrEmpty(m))
-													.ToArray());
 
 		SelectedYear = _currentYear;
 		SelectedMonth = _currentMonth;
 
-		_filteredLocations = new ObservableCollection<string>();
+		Jobs = new ObservableCollection<Job>();
+		Years = new ObservableCollection<int>(Enumerable.Range(2020, 31));
+		Months = new ObservableCollection<string>(System.Globalization.CultureInfo.InvariantCulture.DateTimeFormat.MonthNames
+													.Where(m => !string.IsNullOrEmpty(m))
+													.ToArray());
+		_filteredLocations = new ObservableCollection<string>();		
 
 		LoadJobsCommand = new RelayCommand(LoadJobs);
 		AddJobCommand = new RelayCommand(AddJob);
@@ -143,14 +130,11 @@ public class MainViewModel : BaseViewModel
 		LogoutCommand = new RelayCommand(Logout);
 		ExitCommand = new RelayCommand(ExitApplication);
 
-		LoadUserNotes();
-		LoadJobs();
-		UpdateJobCounts();
 	}
 
-	public async Task Initialize()
+	public void Initialize()
 	{
-		await Login();
+		LoadUserNotes();
 		LoadJobs();
 		UpdateJobCounts();
 	}
@@ -175,7 +159,7 @@ public class MainViewModel : BaseViewModel
 	{
 		if (string.IsNullOrWhiteSpace(SearchText))
 		{
-			LoadJobs(); // Reset to default view when search text is empty
+			LoadJobs();
 		}
 		else
 		{
@@ -213,13 +197,13 @@ public class MainViewModel : BaseViewModel
 
 		var newJob = new Job
 		{
-			SerialNumber = newSerialNumber, // Set calculated SerialNumber
-			JobNumber = "nusll", // Optional, can be set later
-			Location = null, // Optional, can be set later
-			ClientName = null, // Optional, can be set later
-			MeasurementDate = null, // Optional, can be set later
-			Notes = null, // Optional, can be set later
-			IsCompleted = false // Default completion status
+			SerialNumber = newSerialNumber,
+			JobNumber = "null",
+			Location = "null",
+			ClientName = "null",
+			MeasurementDate = DateTime.Today,
+			Notes = "null",
+			IsCompleted = false
 		};
 
 		await _jobService.AddJobAsync(newJob);
