@@ -13,7 +13,6 @@ using System.Windows.Input;
 public class MainViewModel : BaseViewModel
 {
 	private readonly IJobService _jobService;
-	private readonly IAuthenticationService _authService;
 	private readonly IServiceProvider _serviceProvider;
 	private readonly int _currentYear = DateTime.Now.Year;
 	private readonly string _currentMonth = DateTime.Now.ToString("MMMM");
@@ -30,6 +29,7 @@ public class MainViewModel : BaseViewModel
 	public ObservableCollection<Job> Jobs { get; private set; }
 	public ObservableCollection<int> Years { get; private set; }
 	public ObservableCollection<string> Months { get; private set; }
+
 	public ObservableCollection<string> FilteredLocations
 	{
 		get => _filteredLocations;
@@ -97,17 +97,18 @@ public class MainViewModel : BaseViewModel
 	public ICommand LoadJobsCommand { get; }
 	public ICommand AddJobCommand { get; }
 	public ICommand DeleteJobCommand { get; }
+	public ICommand UpdateJobCommand { get; }
 	public ICommand NavigateLeftCommand { get; }
 	public ICommand NavigateRightCommand { get; }
 	public ICommand SearchCommand { get; }
 	public ICommand OpenJobListCommand { get; }
 	public ICommand LogoutCommand { get; }
 	public ICommand ExitCommand { get; }
+	public ICommand HandleCompletionCheckboxCommand { get; }
 
-	public MainViewModel(IJobService jobService, IAuthenticationService authService, IServiceProvider serviceProvider)
+	public MainViewModel(IJobService jobService, IServiceProvider serviceProvider)
 	{
 		_jobService = jobService;
-		_authService = authService;
 		_serviceProvider = serviceProvider;
 
 		SelectedYear = _currentYear;
@@ -118,18 +119,19 @@ public class MainViewModel : BaseViewModel
 		Months = new ObservableCollection<string>(System.Globalization.CultureInfo.InvariantCulture.DateTimeFormat.MonthNames
 													.Where(m => !string.IsNullOrEmpty(m))
 													.ToArray());
-		_filteredLocations = new ObservableCollection<string>();		
+		_filteredLocations = new ObservableCollection<string>();
 
 		LoadJobsCommand = new RelayCommand(LoadJobs);
 		AddJobCommand = new RelayCommand(AddJob);
 		DeleteJobCommand = new RelayCommand<Job>(DeleteJob);
+		UpdateJobCommand = new RelayCommand<Job>(async job => await UpdateJob(job));
 		NavigateLeftCommand = new RelayCommand(NavigateLeft);
 		NavigateRightCommand = new RelayCommand(NavigateRight);
 		SearchCommand = new RelayCommand(SearchJobs);
 		OpenJobListCommand = new RelayCommand(OpenJobListWindow);
 		LogoutCommand = new RelayCommand(Logout);
+		HandleCompletionCheckboxCommand = new RelayCommand<Job>(async job => await HandleCompletionCheckboxChange(job));
 		ExitCommand = new RelayCommand(ExitApplication);
-
 	}
 
 	public void Initialize()
@@ -137,22 +139,6 @@ public class MainViewModel : BaseViewModel
 		LoadUserNotes();
 		LoadJobs();
 		UpdateJobCounts();
-	}
-
-	private async Task Login()
-	{
-		string? username = Environment.GetEnvironmentVariable("AUTH_USERNAME") ?? "CsabaBlazsek";
-		string? password = Environment.GetEnvironmentVariable("AUTH_PASSWORD") ?? "csabi?3164";
-
-		try
-		{
-			await _authService.AuthenticateAsync(username, password);
-			_authService.StartTokenRefreshTimer();
-		}
-		catch (Exception ex)
-		{
-			Console.WriteLine($"Login failed: {ex.Message}");
-		}
 	}
 
 	private async void SearchJobs()
@@ -169,7 +155,6 @@ public class MainViewModel : BaseViewModel
 
 			foreach (var job in filteredJobs)
 			{
-				job.PropertyChanged += (s, e) => HandleJobCompletionChanged(job);
 				Jobs.Add(job);
 			}
 		}
@@ -185,7 +170,6 @@ public class MainViewModel : BaseViewModel
 
 		foreach (var job in jobsForSelectedDate)
 		{
-			job.PropertyChanged += (s, e) => HandleJobCompletionChanged(job);
 			Jobs.Add(job);
 		}
 		UpdateJobCounts();
@@ -216,13 +200,10 @@ public class MainViewModel : BaseViewModel
 		var currentYear = DateTime.Now.Year;
 		var allJobs = await _jobService.GetJobsAsync();
 
-		// Get the jobs for the current year
 		var currentYearJobs = allJobs.Where(j => j.MeasurementDate.HasValue && j.MeasurementDate.Value.Year == currentYear);
 
-		// Find the maximum SerialNumber in the current year jobs
 		var maxSerialNumber = currentYearJobs.Any() ? currentYearJobs.Max(j => j.SerialNumber) : 0;
 
-		// Increment SerialNumber by 1 or start from 1 if no jobs found
 		return maxSerialNumber + 1;
 	}
 
@@ -238,29 +219,49 @@ public class MainViewModel : BaseViewModel
 		}
 	}
 
-	private async void HandleJobCompletionChanged(Job job)
+	private async Task UpdateJob(Job job)
+	{
+		try
+		{
+			await _jobService.UpdateJobAsync(job);
+			MessageBox.Show("Job updated successfully!");
+		}
+		catch (Exception ex)
+		{
+			MessageBox.Show($"Failed to update job: {ex.Message}");
+		}
+	}
+
+	public async Task HandleCompletionCheckboxChange(Job job)
 	{
 		if (job.IsCompleted)
 		{
-			var result = MessageBox.Show("Are you sure you want to mark this job as completed?", "Confirm Completion", MessageBoxButton.YesNo);
-			if (result == MessageBoxResult.No)
+			var result = MessageBox.Show("Mark this job as completed?", "Confirm", MessageBoxButton.YesNo);
+			if (result == MessageBoxResult.Yes)
 			{
-				job.IsCompleted = false;
+				job.IsCompleted = true;
+				await UpdateJob(job);
 			}
 			else
 			{
-				await _jobService.UpdateJobAsync(job);
+				job.IsCompleted = false;
 			}
 		}
 		else
 		{
-			var result = MessageBox.Show("Are you sure you want to unmark this job as completed?", "Confirm", MessageBoxButton.YesNo);
-			if (result == MessageBoxResult.No)
+			var result = MessageBox.Show("Reopen this job for editing?", "Confirm", MessageBoxButton.YesNo);
+			if (result == MessageBoxResult.Yes)
+			{
+				job.IsCompleted = false;
+				await UpdateJob(job);
+			}
+			else
 			{
 				job.IsCompleted = true;
 			}
 		}
 	}
+
 
 	private void NavigateLeft()
 	{

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JobNotesWPF.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,23 @@ namespace JobNotesWPF.Views
             InitializeComponent();
             DataContext = mainViewModel;
         }
+
+		private void DataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+		{
+			if (e.EditAction == DataGridEditAction.Commit)
+			{
+				var dataGrid = sender as DataGrid;
+				var editedJob = dataGrid?.SelectedItem as Job;
+
+				if (editedJob != null)
+				{
+					// Call the UpdateJob method from the ViewModel to update the job in the database
+					var viewModel = (MainViewModel)DataContext;
+					viewModel.UpdateJobCommand.Execute(editedJob);
+				}
+			}
+		}
+
 
 	}
 }
