@@ -225,12 +225,14 @@ public class MainViewModel : BaseViewModel
 		{
 			await _jobService.UpdateJobAsync(job);
 			MessageBox.Show("Job updated successfully!");
+			
 		}
 		catch (Exception ex)
 		{
 			MessageBox.Show($"Failed to update job: {ex.Message}");
 		}
 	}
+
 
 	public async Task HandleCompletionCheckboxChange(Job job)
 	{

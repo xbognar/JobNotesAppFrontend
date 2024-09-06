@@ -245,22 +245,64 @@
 
                 <DataGrid.Columns>
                     <!-- Editable Serial Number Column -->
-                    <DataGridTextColumn Header="Sér. č." Binding="{Binding SerialNumber, Mode=TwoWay}" Width="0.6*" />
+                    <DataGridTextColumn Header="Sér. č." Binding="{Binding SerialNumber, Mode=TwoWay}" Width="0.6*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
                     <!-- Editable Job Number Column -->
-                    <DataGridTextColumn Header="Č. práce" Binding="{Binding JobNumber, Mode=TwoWay}" Width="0.6*" />
+                    <DataGridTextColumn Header="Č. práce" Binding="{Binding JobNumber, Mode=TwoWay}" Width="0.6*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
                     <!-- Editable Location Column -->
-                    <DataGridTextColumn Header="Miesto" Binding="{Binding Location, Mode=TwoWay}" Width="*" />
+                    <DataGridTextColumn Header="Miesto" Binding="{Binding Location, Mode=TwoWay}" Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
                     <!-- Editable Client Name Column -->
-                    <DataGridTextColumn Header="Meno klienta" Binding="{Binding ClientName, Mode=TwoWay}" Width="*" />
+                    <DataGridTextColumn Header="Meno klienta" Binding="{Binding ClientName, Mode=TwoWay}" Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
                     <!-- Editable Measurement Date Column -->
-                    <DataGridTextColumn Header="Dátum merania" Binding="{Binding MeasurementDate, Mode=TwoWay, StringFormat=dd/MM/yyyy}" Width="*" />
+                    <DataGridTextColumn Header="Dátum merania" Binding="{Binding MeasurementDate, Mode=TwoWay, StringFormat=dd/MM/yyyy}" Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
                     <!-- Editable Notes Column -->
-                    <DataGridTextColumn Header="Poznámky" Binding="{Binding Notes, Mode=TwoWay}" Width="*" />
+                    <DataGridTextColumn Header="Poznámky" Binding="{Binding Notes, Mode=TwoWay}" Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
                     <!-- Column for the IsCompleted checkbox -->
                     <DataGridTemplateColumn Header="Dokončené" Width="Auto">
