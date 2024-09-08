@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using DataAccess.Models;
 using JobNotesAppFrontend.Helpers;
 using JobNotesWPF.Models;
 using JobNotesWPF.Views;
@@ -9,11 +10,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Navigation;
 
 public class MainViewModel : BaseViewModel
 {
 	private readonly IJobService _jobService;
 	private readonly IServiceProvider _serviceProvider;
+	private readonly INavigationService _navigationService;
+
 	private readonly int _currentYear = DateTime.Now.Year;
 	private readonly string _currentMonth = DateTime.Now.ToString("MMMM");
 
@@ -97,19 +101,19 @@ public class MainViewModel : BaseViewModel
 	public ICommand LoadJobsCommand { get; }
 	public ICommand AddJobCommand { get; }
 	public ICommand DeleteJobCommand { get; }
-	public ICommand UpdateJobCommand { get; }
+	public ICommand SaveJobCommand { get; }
 	public ICommand NavigateLeftCommand { get; }
 	public ICommand NavigateRightCommand { get; }
 	public ICommand SearchCommand { get; }
 	public ICommand OpenJobListCommand { get; }
 	public ICommand LogoutCommand { get; }
 	public ICommand ExitCommand { get; }
-	public ICommand HandleCompletionCheckboxCommand { get; }
 
-	public MainViewModel(IJobService jobService, IServiceProvider serviceProvider)
+	public MainViewModel(IJobService jobService, IServiceProvider serviceProvider, INavigationService navigationService)
 	{
 		_jobService = jobService;
 		_serviceProvider = serviceProvider;
+		_navigationService = navigationService;
 
 		SelectedYear = _currentYear;
 		SelectedMonth = _currentMonth;
@@ -117,21 +121,22 @@ public class MainViewModel : BaseViewModel
 		Jobs = new ObservableCollection<Job>();
 		Years = new ObservableCollection<int>(Enumerable.Range(2020, 31));
 		Months = new ObservableCollection<string>(System.Globalization.CultureInfo.InvariantCulture.DateTimeFormat.MonthNames
-													.Where(m => !string.IsNullOrEmpty(m))
-													.ToArray());
+												  .Where(m => !string.IsNullOrEmpty(m))
+												  .ToArray());
+
 		_filteredLocations = new ObservableCollection<string>();
 
 		LoadJobsCommand = new RelayCommand(LoadJobs);
 		AddJobCommand = new RelayCommand(AddJob);
 		DeleteJobCommand = new RelayCommand<Job>(DeleteJob);
-		UpdateJobCommand = new RelayCommand<Job>(async job => await UpdateJob(job));
+		SaveJobCommand = new AsyncRelayCommand<Job>(SaveJob);
 		NavigateLeftCommand = new RelayCommand(NavigateLeft);
 		NavigateRightCommand = new RelayCommand(NavigateRight);
 		SearchCommand = new RelayCommand(SearchJobs);
 		OpenJobListCommand = new RelayCommand(OpenJobListWindow);
 		LogoutCommand = new RelayCommand(Logout);
-		HandleCompletionCheckboxCommand = new RelayCommand<Job>(async job => await HandleCompletionCheckboxChange(job));
 		ExitCommand = new RelayCommand(ExitApplication);
+
 	}
 
 	public void Initialize()
@@ -164,14 +169,17 @@ public class MainViewModel : BaseViewModel
 	{
 		Jobs.Clear();
 		var allJobs = await _jobService.GetJobsAsync();
-		var jobsForSelectedDate = allJobs.Where(j => j.MeasurementDate.HasValue
-													 && j.MeasurementDate.Value.Year == SelectedYear
-													 && j.MeasurementDate.Value.ToString("MMMM") == SelectedMonth).ToList();
+		var jobsForSelectedDate = allJobs
+			.Where(j => j.MeasurementDate.HasValue && j.MeasurementDate.Value.Year == SelectedYear && j.MeasurementDate.Value.ToString("MMMM") == SelectedMonth)
+			.ToList();
 
 		foreach (var job in jobsForSelectedDate)
 		{
 			Jobs.Add(job);
 		}
+
+		OnPropertyChanged(nameof(Jobs));
+
 		UpdateJobCounts();
 	}
 
@@ -190,10 +198,11 @@ public class MainViewModel : BaseViewModel
 			IsCompleted = false
 		};
 
-		await _jobService.AddJobAsync(newJob);
-		Jobs.Add(newJob);
+		var createdJob = await _jobService.AddJobAsync(newJob);
+		Jobs.Add(createdJob);
 		UpdateJobCounts();
 	}
+
 
 	private async Task<int> GetNextSerialNumber()
 	{
@@ -207,6 +216,19 @@ public class MainViewModel : BaseViewModel
 		return maxSerialNumber + 1;
 	}
 
+	private async Task SaveJob(Job job)
+	{
+		try
+		{
+			await _jobService.UpdateJobAsync(job);
+			MessageBox.Show("Job saved successfully.");
+		}
+		catch (Exception ex)
+		{
+			MessageBox.Show($"Failed to save job: {ex.Message}");
+		}
+	}
+
 	private async void DeleteJob(Job job)
 	{
 		if (job == null) return;
@@ -218,52 +240,6 @@ public class MainViewModel : BaseViewModel
 			UpdateJobCounts();
 		}
 	}
-
-	private async Task UpdateJob(Job job)
-	{
-		try
-		{
-			await _jobService.UpdateJobAsync(job);
-			MessageBox.Show("Job updated successfully!");
-			
-		}
-		catch (Exception ex)
-		{
-			MessageBox.Show($"Failed to update job: {ex.Message}");
-		}
-	}
-
-
-	public async Task HandleCompletionCheckboxChange(Job job)
-	{
-		if (job.IsCompleted)
-		{
-			var result = MessageBox.Show("Mark this job as completed?", "Confirm", MessageBoxButton.YesNo);
-			if (result == MessageBoxResult.Yes)
-			{
-				job.IsCompleted = true;
-				await UpdateJob(job);
-			}
-			else
-			{
-				job.IsCompleted = false;
-			}
-		}
-		else
-		{
-			var result = MessageBox.Show("Reopen this job for editing?", "Confirm", MessageBoxButton.YesNo);
-			if (result == MessageBoxResult.Yes)
-			{
-				job.IsCompleted = false;
-				await UpdateJob(job);
-			}
-			else
-			{
-				job.IsCompleted = true;
-			}
-		}
-	}
-
 
 	private void NavigateLeft()
 	{
@@ -283,6 +259,7 @@ public class MainViewModel : BaseViewModel
 		}
 
 		LoadJobs();
+		UpdateJobCounts();
 	}
 
 	private void NavigateRight()
@@ -303,19 +280,25 @@ public class MainViewModel : BaseViewModel
 		}
 
 		LoadJobs();
+		UpdateJobCounts();
 	}
 
-	private void UpdateJobCounts()
+	private async void UpdateJobCounts()
 	{
 		MonthlyJobCount = Jobs.Count(j => j.MeasurementDate?.Year == SelectedYear && j.MeasurementDate?.ToString("MMMM") == SelectedMonth);
-		YearlyJobCount = Jobs.Count(j => j.MeasurementDate?.Year == SelectedYear);
+		var allJobs = await _jobService.GetJobsAsync();
+		YearlyJobCount = allJobs.Count(j => j.MeasurementDate?.Year == SelectedYear);
+
+		OnPropertyChanged(nameof(MonthlyJobCount));
+		OnPropertyChanged(nameof(YearlyJobCount));
 	}
+
 
 	private void OpenJobListWindow()
 	{
-		var jobListWindow = _serviceProvider.GetRequiredService<JobListWindow>();
-		jobListWindow.Show();
+		_navigationService.NavigateTo<JobListWindow>();
 	}
+
 
 	private void Logout()
 	{
@@ -331,15 +314,19 @@ public class MainViewModel : BaseViewModel
 	}
 
 	private void LoadUserNotes()
-	{
-		UserNote1 = JobNotesWPF.Properties.Settings.Default.UserNote1;
-		UserNote2 = JobNotesWPF.Properties.Settings.Default.UserNote2;
-	}
+{
+	var userNote1 = JobNotesWPF.Properties.Settings.Default.UserNote1;
+	var userNote2 = JobNotesWPF.Properties.Settings.Default.UserNote2;
 
-	private void SaveUserNotes()
-	{
-		JobNotesWPF.Properties.Settings.Default.UserNote1 = UserNote1;
-		JobNotesWPF.Properties.Settings.Default.UserNote2 = UserNote2;
-		JobNotesWPF.Properties.Settings.Default.Save();
-	}
+    UserNote1 = string.IsNullOrEmpty(userNote1) ? "" : userNote1;
+    UserNote2 = string.IsNullOrEmpty(userNote2) ? "" : userNote2;
+}
+
+private void SaveUserNotes()
+{
+    JobNotesWPF.Properties.Settings.Default.UserNote1 = UserNote1;
+    JobNotesWPF.Properties.Settings.Default.UserNote2 = UserNote2;
+    JobNotesWPF.Properties.Settings.Default.Save();
+}
+
 }

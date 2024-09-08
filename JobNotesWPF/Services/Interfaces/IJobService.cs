@@ -1,4 +1,5 @@
-﻿using JobNotesWPF.Models;
+﻿using DataAccess.Models;
+using JobNotesWPF.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

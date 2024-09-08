@@ -148,8 +148,8 @@
         <Setter Property="IsReadOnly" Value="True" />
         <Setter Property="HeadersVisibility" Value="Column" />
         <Setter Property="GridLinesVisibility" Value="None" />
-        <Setter Property="RowBackground" Value="{StaticResource UncompletedJobBackgroundBrush}" />
-        <Setter Property="AlternatingRowBackground" Value="{StaticResource CompletedJobBackgroundBrush}" />
+        <Setter Property="RowBackground" Value="White" />
+        <Setter Property="AlternatingRowBackground" Value="White" />
         <Setter Property="BorderBrush" Value="White" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="10" />
@@ -298,38 +298,21 @@
         </Setter>
     </Style>
 
-
-    <!-- Enhanced Pattern with Five Horizontal Thick Lines for Completed Rows -->
-    <VisualBrush x:Key="EnhancedStripedPattern" TileMode="None">
+    <!-- Striped Pattern with Three Horizontal Lines for Completed Rows -->
+    <VisualBrush x:Key="StripedPatternForCompletedRows" TileMode="Tile" Viewport="0,0,100,40" ViewportUnits="Absolute" Viewbox="0,0,100,40" ViewboxUnits="Absolute">
         <VisualBrush.Visual>
-            <Grid Background="White" Width="60" Height="60">
-                <!-- Define the grid with sufficient row space -->
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
-                </Grid.RowDefinitions>
-
+            <Grid Background="Transparent" Width="100" Height="40">
                 <!-- First horizontal line -->
-                <Rectangle Grid.Row="0" Fill="{StaticResource PrimaryBrush}" Height="8" VerticalAlignment="Center"/>
-
+                <Rectangle Fill="{StaticResource PrimaryBrush}" Height="4" VerticalAlignment="Top"/>
                 <!-- Second horizontal line -->
-                <Rectangle Grid.Row="1" Fill="{StaticResource PrimaryBrush}" Height="8" VerticalAlignment="Center"/>
-
+                <Rectangle Fill="{StaticResource PrimaryBrush}" Height="4" VerticalAlignment="Center"/>
                 <!-- Third horizontal line -->
-                <Rectangle Grid.Row="2" Fill="{StaticResource PrimaryBrush}" Height="8" VerticalAlignment="Center"/>
-
-                <!-- Fourth horizontal line -->
-                <Rectangle Grid.Row="3" Fill="{StaticResource PrimaryBrush}" Height="8" VerticalAlignment="Center"/>
-
-                <!-- Fifth horizontal line -->
-                <Rectangle Grid.Row="4" Fill="{StaticResource PrimaryBrush}" Height="8" VerticalAlignment="Center"/>
+                <Rectangle Fill="{StaticResource PrimaryBrush}" Height="4" VerticalAlignment="Bottom"/>
             </Grid>
         </VisualBrush.Visual>
     </VisualBrush>
+
+
 
     <!-- Checkbox Style -->
     <Style x:Key="CheckBoxStyle" TargetType="CheckBox">

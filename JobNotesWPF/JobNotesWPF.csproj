@@ -17,6 +17,7 @@
     <None Remove="Resources\Images\FirstIcon.png" />
     <None Remove="Resources\Images\ListIcon.png" />
     <None Remove="Resources\Images\LogOutIcon.png" />
+    <None Remove="Resources\Images\Save.png" />
     <None Remove="Resources\Images\search.png" />
     <None Remove="Resources\Images\SecondIcon.png" />
     <None Remove="Resources\Images\ThirdIcon.png" />
@@ -61,6 +62,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Images\LogOutIcon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\Save.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Images\search.png">

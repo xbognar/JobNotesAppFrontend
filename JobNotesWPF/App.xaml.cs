@@ -30,9 +30,9 @@ namespace JobNotesWPF
 			services.AddTransient<IJobService, JobService>();
 			services.AddTransient<INavigationService, NavigationService>();
 			services.AddSingleton<MainViewModel>();
-			services.AddSingleton<JobListViewModel>();
+			services.AddTransient<JobListViewModel>();
 			services.AddSingleton<MainWindow>();
-			services.AddSingleton<JobListWindow>();
+			services.AddTransient<JobListWindow>();
 		}
 
 		protected override async void OnStartup(StartupEventArgs e)

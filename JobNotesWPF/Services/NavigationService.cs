@@ -13,7 +13,17 @@ public class NavigationService : INavigationService
 	public void NavigateTo<T>() where T : Window
 	{
 		var window = _serviceProvider.GetService(typeof(T)) as Window;
-		window?.Show();
+
+		if (window != null)
+		{
+			window.Closed += (sender, args) =>
+			{
+				window = null; 
+			};
+
+			window.Show();
+		}
 	}
-	
+
+
 }

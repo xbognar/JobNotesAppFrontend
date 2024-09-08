@@ -1,47 +1,81 @@
-﻿using JobNotesWPF.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DataAccess.Models;
+using JobNotesWPF.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Collections.Specialized;
 
 namespace JobNotesWPF.Views
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
-    {
-        public MainWindow(MainViewModel mainViewModel)
-        {
-            InitializeComponent();
-            DataContext = mainViewModel;
-        }
-
-		private void DataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+	public partial class MainWindow : Window
+	{
+		public MainWindow(MainViewModel mainViewModel)
 		{
-			if (e.EditAction == DataGridEditAction.Commit)
-			{
-				var dataGrid = sender as DataGrid;
-				var editedJob = dataGrid?.SelectedItem as Job;
+			InitializeComponent();
+			DataContext = mainViewModel;
 
-				if (editedJob != null)
+			mainViewModel.Jobs.CollectionChanged += Jobs_CollectionChanged;
+		}
+
+		private void Jobs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			Application.Current.Dispatcher.InvokeAsync(() =>
+			{
+				foreach (var job in JobDataGrid.Items)
 				{
-					// Call the UpdateJob method from the ViewModel to update the job in the database
-					var viewModel = (MainViewModel)DataContext;
-					viewModel.UpdateJobCommand.Execute(editedJob);
+					var row = JobDataGrid.ItemContainerGenerator.ContainerFromItem(job) as DataGridRow;
+					if (row != null)
+					{
+						var jobItem = job as Job;
+						if (jobItem != null)
+						{
+							if (jobItem.IsCompleted)
+							{
+								row.Background = (Brush)FindResource("StripedPatternForCompletedRows");
+							}
+							else
+							{
+								row.Background = (Brush)FindResource("UncompletedJobBackgroundBrush");
+							}
+						}
+					}
+				}
+			}, System.Windows.Threading.DispatcherPriority.Loaded);
+		}
+
+
+		private void SaveButton_Click(object sender, RoutedEventArgs e)
+		{
+			var button = sender as Button;
+			var job = button?.DataContext as Job;
+
+			if (job != null)
+			{
+				if (JobDataGrid.CommitEdit(DataGridEditingUnit.Row, true))
+				{
+					var viewModel = this.DataContext as MainViewModel;
+					viewModel?.SaveJobCommand.Execute(job);
+
+					var row = JobDataGrid.ItemContainerGenerator.ContainerFromItem(job) as DataGridRow;
+					if (row != null)
+					{
+						if (job.IsCompleted)
+						{
+							row.Background = (Brush)FindResource("StripedPatternForCompletedRows");
+						}
+						else
+						{
+							row.Background = (Brush)FindResource("UncompletedJobBackgroundBrush");
+						}
+					}
 				}
 			}
 		}
 
+		private void CheckBox_Checked(object sender, RoutedEventArgs e)
+		{
+			JobDataGrid.CommitEdit(DataGridEditingUnit.Row, true);
+		}
 
 	}
 }

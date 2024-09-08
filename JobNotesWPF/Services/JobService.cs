@@ -1,4 +1,5 @@
-﻿using JobNotesWPF.Models;
+﻿using DataAccess.Models;
+using JobNotesWPF.Models;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -26,8 +27,10 @@ public class JobService : BaseService, IJobService
 	{
 		var response = await _httpClient.PostAsJsonAsync("api/jobs", job);
 		response.EnsureSuccessStatusCode();
-		return await response.Content.ReadAsAsync<Job>();
+		var createdJob = await response.Content.ReadAsAsync<Job>();
+		return createdJob;
 	}
+
 
 	public async Task UpdateJobAsync(Job job)
 	{

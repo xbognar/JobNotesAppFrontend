@@ -26,5 +26,16 @@ namespace JobNotesWPF.Views
 			InitializeComponent();
 			DataContext = jobListViewModel;
 		}
-    }
+
+		protected override void OnActivated(EventArgs e)
+		{
+			base.OnActivated(e);
+
+			if (DataContext is JobListViewModel viewModel)
+			{
+				viewModel.LoadData(); 
+			}
+		}
+
+	}
 }

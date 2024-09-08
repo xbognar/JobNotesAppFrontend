@@ -216,24 +216,27 @@
             <Border.Effect>
                 <DropShadowEffect Color="Black" BlurRadius="10" Direction="320" ShadowDepth="5" Opacity="0.2"/>
             </Border.Effect>
-            <DataGrid Style="{StaticResource BaseDataGridStyle}" 
-                      ItemsSource="{Binding Jobs}" 
-                      AutoGenerateColumns="False" 
-                      IsReadOnly="False"
-                      CellEditEnding="DataGrid_CellEditEnding"
-                            TextElement.FontSize="16" 
-                      TextElement.FontFamily="Segoe UI"
-                      RowBackground="{StaticResource UncompletedJobBackgroundBrush}"
-                      AlternatingRowBackground="{StaticResource CompletedJobBackgroundBrush}"
-                      Background="White"
-                      CellStyle="{StaticResource CenteredDataGridCellStyle}">
+            <DataGrid x:Name="JobDataGrid" 
+              Style="{StaticResource BaseDataGridStyle}" 
+              ItemsSource="{Binding Jobs}" 
+              VirtualizingPanel.IsVirtualizing="False" 
+              EnableRowVirtualization="False"        
+              AutoGenerateColumns="False" 
+              IsReadOnly="False"
+              CanUserAddRows="False"
+              TextElement.FontSize="16" 
+              TextElement.FontFamily="Segoe UI"
+              Background="White"
+              RowBackground="White"
+              AlternatingRowBackground="White"
+              CellStyle="{StaticResource CenteredDataGridCellStyle}">
 
                 <!-- Header Style -->
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="Background" Value="{StaticResource TableHeaderBrush}" />
                         <Setter Property="Foreground" Value="White" />
-                        <Setter Property="FontSize" Value="14" />
+                        <Setter Property="FontSize" Value="16" />
                         <Setter Property="FontWeight" Value="Bold" />
                         <Setter Property="HorizontalContentAlignment" Value="Center" />
                         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -304,27 +307,39 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <!-- Column for the IsCompleted checkbox -->
+                    <!-- IsCompleted Checkbox Column -->
                     <DataGridTemplateColumn Header="Dokončené" Width="Auto">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsCompleted, Mode=TwoWay}"
-                                          Command="{Binding DataContext.HandleCompletionCheckboxCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                          CommandParameter="{Binding}"
-                                          Style="{StaticResource CheckBoxStyle}" /> 
+                                <CheckBox IsChecked="{Binding IsCompleted, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                          Style="{StaticResource CheckBoxStyle}"
+                                          Checked="CheckBox_Checked" 
+                                          Unchecked="CheckBox_Checked"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <!-- Column for the delete button with trash icon -->
+
+                    <!-- Save Button Column -->
+                    <DataGridTemplateColumn Header="Uložiť" Width="Auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Click="SaveButton_Click" Background="Transparent" BorderBrush="Transparent">
+                                    <Image Source="pack://application:,,,/Resources/Images/Save.png" Width="16" Height="16"/>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Delete Button Column -->
                     <DataGridTemplateColumn Header="Odstrániť" Width="Auto">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Command="{Binding DataContext.DeleteJobCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
-                                        CommandParameter="{Binding}" 
-                                        Background="Transparent" 
-                                        BorderBrush="Transparent">
-                                    <Image Source="pack://application:,,,/Resources/Images/trash.png" Width="16" Height="16" />
+                                CommandParameter="{Binding}" 
+                                Background="Transparent" 
+                                BorderBrush="Transparent">
+                                    <Image Source="pack://application:,,,/Resources/Images/trash.png" Width="16" Height="16"/>
                                 </Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -334,16 +349,12 @@
                 <!-- Style for the row, including completed rows background -->
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
-                        <Setter Property="Background" Value="{StaticResource UncompletedJobBackgroundBrush}" />
-                        <Setter Property="IsEnabled" Value="True" />
-                        <!-- Rows are editable initially -->
-                        <Setter Property="Height" Value="40" />
+                        <Setter Property="Background" Value="{StaticResource UncompletedJobBackgroundBrush}"/>
+                        <Setter Property="Height" Value="40"/>
                         <Style.Triggers>
-                            <!-- Trigger striped pattern and disable row when job is completed -->
+                            <!-- Trigger striped pattern when the job is completed -->
                             <DataTrigger Binding="{Binding IsCompleted}" Value="True">
-                                <Setter Property="Background" Value="{StaticResource EnhancedStripedPattern}" />
-                                <Setter Property="IsEnabled" Value="False" />
-                                <!-- Disable row when job is marked as completed -->
+                                <Setter Property="Background" Value="{StaticResource StripedPatternForCompletedRows}"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
