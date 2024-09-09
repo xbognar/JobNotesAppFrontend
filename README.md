@@ -119,10 +119,3 @@ The Job Notes App interacts with a backend REST API. Below is a brief overview o
 
 *For detailed API usage, refer to the backend API documentation.*
 
-## Contributing
-
-Contributions are welcome! Please fork the repository, create a new branch, and submit a pull request. Ensure your code follows the project's coding standards and includes tests where applicable.
-
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for more information.
