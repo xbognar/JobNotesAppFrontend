@@ -69,9 +69,10 @@
                       ItemsSource="{Binding Jobs}" 
                       IsReadOnly="True" 
                       AutoGenerateColumns="False" 
-                      Margin="0,0,0,-1" 
-                      RowHeight="45"    
-                FontSize="16">
+                      Margin="9,9,9,9" 
+                      RowHeight="45"
+                      Background="White"
+                      FontSize="16">
 
                 <DataGrid.Columns>
                     <!-- Common CellStyle for centering text -->

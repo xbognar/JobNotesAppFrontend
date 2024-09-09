@@ -1,16 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using DataAccess.Models;
 using JobNotesAppFrontend.Helpers;
-using JobNotesWPF.Models;
 using JobNotesWPF.Views;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Navigation;
 
 public class MainViewModel : BaseViewModel
 {
@@ -314,19 +308,19 @@ public class MainViewModel : BaseViewModel
 	}
 
 	private void LoadUserNotes()
-{
-	var userNote1 = JobNotesWPF.Properties.Settings.Default.UserNote1;
-	var userNote2 = JobNotesWPF.Properties.Settings.Default.UserNote2;
+	{
+		var userNote1 = JobNotesWPF.Properties.Settings.Default.UserNote1;
+		var userNote2 = JobNotesWPF.Properties.Settings.Default.UserNote2;
 
-    UserNote1 = string.IsNullOrEmpty(userNote1) ? "" : userNote1;
-    UserNote2 = string.IsNullOrEmpty(userNote2) ? "" : userNote2;
-}
+		UserNote1 = string.IsNullOrEmpty(userNote1) ? "" : userNote1;
+		UserNote2 = string.IsNullOrEmpty(userNote2) ? "" : userNote2;
+	}
 
-private void SaveUserNotes()
-{
-    JobNotesWPF.Properties.Settings.Default.UserNote1 = UserNote1;
-    JobNotesWPF.Properties.Settings.Default.UserNote2 = UserNote2;
-    JobNotesWPF.Properties.Settings.Default.Save();
-}
+	private void SaveUserNotes()
+	{
+		JobNotesWPF.Properties.Settings.Default.UserNote1 = UserNote1;
+		JobNotesWPF.Properties.Settings.Default.UserNote2 = UserNote2;
+		JobNotesWPF.Properties.Settings.Default.Save();
+	}
 
 }

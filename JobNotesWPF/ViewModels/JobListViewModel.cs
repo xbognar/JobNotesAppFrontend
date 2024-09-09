@@ -1,10 +1,6 @@
 ﻿using DataAccess.Models;
 using JobNotesAppFrontend.Helpers;
-using JobNotesWPF.Models;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace JobNotesWPF.ViewModels
 {
@@ -58,11 +54,8 @@ namespace JobNotesWPF.ViewModels
 		{
 			_jobService = jobService;
 			Jobs = new ObservableCollection<JobViewModel>();
-
-			// We won't load data initially, since we'll rely on LoadData being called from outside
 		}
 
-		// Make LoadData public so it can be triggered externally
 		public async void LoadData()
 		{
 			var allJobs = await _jobService.GetJobsAsync();
@@ -83,9 +76,8 @@ namespace JobNotesWPF.ViewModels
 				return;
 			}
 
-			// Calculate the best year based on the number of jobs
 			var yearGroups = jobs
-				.Where(j => j.MeasurementDate.HasValue) // Ensure jobs have valid dates
+				.Where(j => j.MeasurementDate.HasValue)
 				.GroupBy(j => j.MeasurementDate.Value.Year)
 				.Select(g => new { Year = g.Key, Count = g.Count() })
 				.OrderByDescending(g => g.Count)
@@ -93,9 +85,8 @@ namespace JobNotesWPF.ViewModels
 
 			BestYear = yearGroups.First().Year;
 
-			// Calculate the best month within the best year
 			var monthGroups = jobs
-				.Where(j => j.MeasurementDate.HasValue) 
+				.Where(j => j.MeasurementDate.HasValue)
 				.GroupBy(j => new { j.MeasurementDate.Value.Year, j.MeasurementDate.Value.Month })
 				.Select(g => new { g.Key.Year, g.Key.Month, Count = g.Count() })
 				.OrderByDescending(g => g.Count)
@@ -105,7 +96,6 @@ namespace JobNotesWPF.ViewModels
 			BestMonth = new DateTime(1, bestMonthGroup.Month, 1).ToString("MMMM");
 			BestMonthYear = $"{bestMonthGroup.Year}";
 
-			// Calculate the average jobs per year
 			AverageJobsPerYear = yearGroups.Average(g => g.Count);
 		}
 	}
