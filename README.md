@@ -34,11 +34,11 @@ The Job Notes App is a desktop application that interacts with a backend REST AP
 
 ### Main Window
 
-![Main Window](path/to/your/screenshot-mainwindow.png)
+![Main Window](C:\Users\matth\OneDrive\Desktop\MainWindow.png)
 
 ### Job List Window
 
-![Job List Window](path/to/your/screenshot-joblistwindow.png)
+![Job List Window](C:\Users\matth\OneDrive\Desktop\JobListWindow.png)
 
 *Note: Replace the paths with the actual paths to the screenshots when you upload them.*
 
