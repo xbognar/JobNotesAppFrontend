@@ -14,8 +14,6 @@ Job Notes App is a WPF (Windows Presentation Foundation) application designed to
 - [Technologies Used](#technologies-used)
 - [Configuration](#configuration)
 - [API Documentation](#api-documentation)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Overview
 
@@ -34,11 +32,11 @@ The Job Notes App is a desktop application that interacts with a backend REST AP
 
 ### Main Window
 
-![Main Window](C:\Users\matth\OneDrive\Desktop\MainWindow.png)
+![Main Window](https://github.com/xbognar/JobNotesAppFrontend/blob/master/JobNotesWPF/Resources/Images/MainWindow.png)
 
 ### Job List Window
 
-![Job List Window](C:\Users\matth\OneDrive\Desktop\JobListWindow.png)
+![Job List Window](https://github.com/xbognar/JobNotesAppFrontend/blob/master/JobNotesWPF/Resources/Images/JobListWindow.png)
 
 *Note: Replace the paths with the actual paths to the screenshots when you upload them.*
 
