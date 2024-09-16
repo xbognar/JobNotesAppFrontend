@@ -59,11 +59,11 @@ To set up the project locally, follow these steps:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/job-notes-app.git
+   git clone https://github.com/xbognar/JobNotesAppFrontend.git
    ```
 2. **Navigate to the project directory**:
    ```bash
-   cd job-notes-app
+   cd JobNotesAppFrontend
    ```
 3. **Install dependencies** (if applicable, e.g., using NuGet packages):
    - Ensure all required packages are restored. Visual Studio should handle this automatically on project load.
