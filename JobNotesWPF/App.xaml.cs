@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http;
 using System.Windows;
-using dotenv.net;
 using JobNotesWPF.Views;
 
 namespace JobNotesWPF
@@ -14,7 +13,8 @@ namespace JobNotesWPF
 
 		public App()
 		{
-			DotEnv.Load();
+			DotNetEnv.Env.Load();
+			DotNetEnv.Env.TraversePath().Load();
 
 			var serviceCollection = new ServiceCollection();
 			ConfigureServices(serviceCollection);
@@ -37,12 +37,11 @@ namespace JobNotesWPF
 
 		protected override async void OnStartup(StartupEventArgs e)
 		{
-			var authService = ServiceProvider.GetRequiredService<IAuthenticationService>();
+			var username = System.Environment.GetEnvironmentVariable("USERNAME");
+			var password = System.Environment.GetEnvironmentVariable("PASSWORD");
 
-			var token = await authService.AuthenticateAsync(
-				Environment.GetEnvironmentVariable("AUTH_USERNAME") ?? "CsabaBlazsek",
-				Environment.GetEnvironmentVariable("AUTH_PASSWORD") ?? "csabi?3164"
-			);
+			var authService = ServiceProvider.GetRequiredService<IAuthenticationService>();
+			var token = await authService.AuthenticateAsync(username, password);
 
 			if (!string.IsNullOrEmpty(token))
 			{
