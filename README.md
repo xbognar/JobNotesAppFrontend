@@ -34,10 +34,6 @@ The Job Notes App is a desktop application that interacts with a backend REST AP
 
 ![Main Window](https://github.com/xbognar/JobNotesAppFrontend/blob/master/JobNotesWPF/Resources/Images/MainWindow.png)
 
-### Job List Window
-
-![Job List Window](https://github.com/xbognar/JobNotesAppFrontend/blob/master/JobNotesWPF/Resources/Images/JobListWindow.png)
-
 *Note: Replace the paths with the actual paths to the screenshots when you upload them.*
 
 ## Architecture
